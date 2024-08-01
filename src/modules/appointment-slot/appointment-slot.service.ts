@@ -92,9 +92,13 @@ export class AppointmentSlotService {
         
         const existing = await this.appointmentSlotRepo.findOne({ where: { id: appointmentSlotId } } )
         if(!existing.reservedTime) {
-            throw `Cannot reserve appointment: ${appointmentSlotId} as it has not been reserved.`
+            throw `Cannot confirm appointment: ${appointmentSlotId} as it has not been reserved.`
         }
-        
+
+        if(existing.confirmedTime) {
+            throw `Cannot confirm appointment: ${appointmentSlotId} as it has already been confirmed.` 
+        }
+
         return this.appointmentSlotRepo.save({
             id: appointmentSlotId,
             confirmedTime: new Date().getTime() / 1000
