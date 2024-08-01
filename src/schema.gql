@@ -1,0 +1,77 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Client {
+  id: Int!
+  firstName: String!
+  lastName: String!
+}
+
+type Provider {
+  id: Int!
+  firstName: String!
+  lastName: String!
+}
+
+type AppointmentSlot {
+  id: Int!
+  providerId: Int!
+  clientId: Int
+  startTime: Float!
+  endTime: Float!
+  reservedTime: Float
+  confirmedTime: Float
+}
+
+type Query {
+  findAllAppointSlots: [AppointmentSlot!]!
+  getAvailableAppointmentSlots(input: GetAvailableAppointmentSlotsInput!): [AppointmentSlot!]!
+  findAllProviders: [Provider!]!
+  findAllClients: [Client!]!
+}
+
+input GetAvailableAppointmentSlotsInput {
+  providerId: Int!
+}
+
+type Mutation {
+  createAppointmentSlot(input: CreateAppointmentSlotInput!): AppointmentSlot!
+  createAppointmentSlotsFromSpan(input: CreateAppointmentSlotsFromSpanInput!): [AppointmentSlot!]!
+  reserveAppointment(input: ReserveAppointmentInput!): AppointmentSlot!
+  confirmReservation(input: ConfirmReservationInput!): AppointmentSlot!
+  createProvider(input: CreateProviderInput!): Provider!
+  createClient(input: CreateClientInput!): Client!
+}
+
+input CreateAppointmentSlotInput {
+  providerId: Int!
+  startTime: Int!
+  endTime: Int!
+}
+
+input CreateAppointmentSlotsFromSpanInput {
+  providerId: Int!
+  startTime: Int!
+  endTime: Int!
+  buffer: Int! = 0
+}
+
+input ReserveAppointmentInput {
+  appointmentSlotId: Int!
+  clientId: Int!
+}
+
+input ConfirmReservationInput {
+  appointmentSlotId: Int!
+}
+
+input CreateProviderInput {
+  firstName: String!
+  lastName: String!
+}
+
+input CreateClientInput {
+  firstName: String!
+  lastName: String!
+}
