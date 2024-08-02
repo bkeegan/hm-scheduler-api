@@ -32,7 +32,8 @@ type Query {
 }
 
 input GetAvailableAppointmentSlotsInput {
-  endTime: Int!
+  startTime: Float! = 1722600885.619
+  endTime: Float!
 }
 
 type Mutation {

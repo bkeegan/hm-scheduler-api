@@ -80,11 +80,13 @@ export class AppointmentSlotService {
     }
 
     async getAvailableAppointmentSlots(input: GetAvailableAppointmentSlotsInput) {
-        const { endTime } = input;
+        const { startTime, endTime } = input;        
         const now = new Date().getTime() / 1000;
-        return (await this.findWithinSpan(now + reserveMin, endTime))
+        return (await this.findWithinSpan(startTime, endTime))
             .filter(a => !a.reservedTime || (now - a.reservedTime > reservationExpiry && !a.confirmedTime))
             //reservedTime is null (not reserved or reserved time is 30 minutes from now (i.e. at least > 30 minutes old) and not confirmed)
+            .filter(a => a.startTime - now >= reserveMin)
+            //start time is less than 24 hrs
     }
 
     reserveAppointment(input: ReserveAppointmentInput) {

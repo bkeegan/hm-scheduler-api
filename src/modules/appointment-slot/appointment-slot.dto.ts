@@ -1,4 +1,6 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
+import { Field, Float, InputType, Int } from "@nestjs/graphql";
+
+
 
 @InputType()
 export class CreateAppointmentSlotInput {
@@ -29,8 +31,12 @@ export class CreateAppointmentSlotsFromSpanInput {
 
 @InputType()
 export class GetAvailableAppointmentSlotsInput {
-    @Field(() => Int)
+    @Field(() => Float, { defaultValue: new Date().getTime() / 1000 } )
+    startTime?: number;
+
+    @Field(() => Float)
     endTime: number;
+
 }
 
 @InputType()
