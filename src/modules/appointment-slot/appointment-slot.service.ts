@@ -3,6 +3,7 @@ import { AppointmentSlot } from './appointment-slot.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { ConfirmReservationInput, CreateAppointmentSlotInput, CreateAppointmentSlotsFromSpanInput, GetAvailableAppointmentSlotsInput, ReserveAppointmentInput } from './appointment-slot.dto';
+import { ReservationCheckResult } from './enum';
 
 //these would be managed by some configuration system and not just constants sitting here.
 const increment = 900 //15 minutes
@@ -83,14 +84,17 @@ export class AppointmentSlotService {
         const { startTime, endTime } = input;        
         const now = new Date().getTime() / 1000;
         return (await this.findWithinSpan(startTime, endTime))
-            .filter(a => !a.reservedTime || (now - a.reservedTime > reservationExpiry && !a.confirmedTime))
-            //reservedTime is null (not reserved or reserved time is 30 minutes from now (i.e. at least > 30 minutes old) and not confirmed)
-            .filter(a => a.startTime - now >= reserveMin)
-            //start time at least 24hrs away
+            .filter(a => _isReservationValid(a) == ReservationCheckResult.Valid)
     }
 
-    reserveAppointment(input: ReserveAppointmentInput) {
+    async reserveAppointment(input: ReserveAppointmentInput) {
         const { appointmentSlotId, clientId } = input;
+
+        const existing = await this.appointmentSlotRepo.findOne({ where: { id: appointmentSlotId} });
+        if(_isReservationValid(existing) != ReservationCheckResult.Valid) {
+            throw `Reservation not valid`
+        }
+
         return this.appointmentSlotRepo.save({
             id: appointmentSlotId,
             clientId: clientId,
@@ -126,5 +130,26 @@ export class AppointmentSlotService {
             confirmedTime: now
         })
     }
-
 }
+
+function _isReservationValid(appointmentSlot: AppointmentSlot): ReservationCheckResult {
+    const now = new Date().getTime() / 1000;
+    
+    //already confirmed
+    if(appointmentSlot.confirmedTime) {
+        ReservationCheckResult.AlreadyConfirmed
+    }
+
+    //reserved
+    if(appointmentSlot.reservedTime && (now - appointmentSlot.reservedTime <= reservationExpiry)) {
+        ReservationCheckResult.AlreadyReserved
+    }
+
+    //below returned minimum
+    if(appointmentSlot.startTime - now < reserveMin) {
+        ReservationCheckResult.BelowMinimum
+    }
+
+    return ReservationCheckResult.Valid
+}
+
