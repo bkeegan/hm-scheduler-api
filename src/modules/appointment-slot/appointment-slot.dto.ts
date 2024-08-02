@@ -7,10 +7,10 @@ export class CreateAppointmentSlotInput {
     @Field(() => Int)
     providerId: number;
     
-    @Field(() => Int)
+    @Field(() => Float)
     startTime: number;
 
-    @Field(() => Int)
+    @Field(() => Float)
     endTime: number;
 }
 
@@ -19,10 +19,10 @@ export class CreateAppointmentSlotsFromSpanInput {
     @Field(() => Int)
     providerId: number;
     
-    @Field(() => Int)
+    @Field(() => Float)
     startTime: number;
 
-    @Field(() => Int)
+    @Field(() => Float)
     endTime: number;
 
     @Field(() => Int, { defaultValue: 0 })
