@@ -116,6 +116,7 @@ export class AppointmentSlotService {
             throw `Cannot confirm appointment: ${appointmentSlotId} as it has already been confirmed.` 
         }
 
+        //wasn't sure if we wanted to allow clients to confirm expired reservations if they had not been reserved by another client. 
         if(now - existing.reservedTime > reservationExpiry) {
             throw `Cannot confirm appointment: ${appointmentSlotId} the reservation is expired`
         }
