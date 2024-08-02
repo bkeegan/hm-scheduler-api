@@ -55,7 +55,7 @@ After installing npm modules
     
     ```graphql 
     query {
-        getAvailableAppointmentSlots {
+        getAvailableAppointmentSlots (input:{ endTime: 1822457335 }) {
             startTime
             endTime
             id

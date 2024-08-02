@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { AppointmentSlot } from './appointment-slot.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThanOrEqual, Repository } from 'typeorm';
-import { ConfirmReservationInput, CreateAppointmentSlotInput, CreateAppointmentSlotsFromSpanInput, ReserveAppointmentInput } from './appointment-slot.dto';
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { ConfirmReservationInput, CreateAppointmentSlotInput, CreateAppointmentSlotsFromSpanInput, GetAvailableAppointmentSlotsInput, ReserveAppointmentInput } from './appointment-slot.dto';
 
 //these would be managed by some configuration system and not just constants sitting here.
 const increment = 900 //15 minutes
@@ -70,23 +70,25 @@ export class AppointmentSlotService {
         );
     }
 
-    findAfterTime(startTime: number): Promise<AppointmentSlot[]> {
+    findWithinSpan(startTime: number, endTime: number): Promise<AppointmentSlot[]> {
         return this.appointmentSlotRepo.find(
          { where: {
-            startTime: MoreThanOrEqual(startTime)
+            startTime: MoreThanOrEqual(startTime),
+            endTime: LessThanOrEqual(endTime)
          }}   
         );
     }
 
-    async getAvailableAppointmentSlots() {
+    async getAvailableAppointmentSlots(input: GetAvailableAppointmentSlotsInput) {
+        const { endTime } = input;
         const now = new Date().getTime() / 1000;
-        return (await this.findAfterTime(now + reserveMin))
+        return (await this.findWithinSpan(now + reserveMin, endTime))
             .filter(a => !a.reservedTime || (now - a.reservedTime > reservationExpiry && !a.confirmedTime))
             //reservedTime is null (not reserved or reserved time is 30 minutes from now (i.e. at least > 30 minutes old) and not confirmed)
     }
 
-    reserveAppointment(reserveAppointmentInput: ReserveAppointmentInput) {
-        const { appointmentSlotId, clientId } = reserveAppointmentInput;
+    reserveAppointment(input: ReserveAppointmentInput) {
+        const { appointmentSlotId, clientId } = input;
         return this.appointmentSlotRepo.save({
             id: appointmentSlotId,
             clientId: clientId,
@@ -94,9 +96,9 @@ export class AppointmentSlotService {
         })
     }
 
-    async confirmReservation(confirmReservation: ConfirmReservationInput) {
+    async confirmReservation(input: ConfirmReservationInput) {
         const now = new Date().getTime() / 1000;
-        const { appointmentSlotId } = confirmReservation;
+        const { appointmentSlotId, clientId } = input;
         
         const existing = await this.appointmentSlotRepo.findOne({ where: { id: appointmentSlotId } } )
           
@@ -104,7 +106,7 @@ export class AppointmentSlotService {
             throw `Cannot confirm appointment: ${appointmentSlotId} as it has not been reserved.`
         }
 
-        if(existing.clientId != confirmReservation.clientId) {
+        if(existing.clientId != clientId) {
             throw `Cannot confirm appointment: ${appointmentSlotId} as this is reserved by another client`
         }
 
