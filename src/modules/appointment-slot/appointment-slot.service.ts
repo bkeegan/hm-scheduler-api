@@ -86,7 +86,7 @@ export class AppointmentSlotService {
             .filter(a => !a.reservedTime || (now - a.reservedTime > reservationExpiry && !a.confirmedTime))
             //reservedTime is null (not reserved or reserved time is 30 minutes from now (i.e. at least > 30 minutes old) and not confirmed)
             .filter(a => a.startTime - now >= reserveMin)
-            //start time is less than 24 hrs
+            //start time at least 24hrs away
     }
 
     reserveAppointment(input: ReserveAppointmentInput) {
