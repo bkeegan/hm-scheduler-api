@@ -102,7 +102,7 @@ export class AppointmentSlotService {
         const now = new Date().getTime() / 1000;
         const { appointmentSlotId, clientId } = input;
         
-        const existing = await this.appointmentSlotRepo.findOne({ where: { id: appointmentSlotId } } )
+        const existing = await this.appointmentSlotRepo.findOne({ where: { id: appointmentSlotId } })
           
         if(!existing.reservedTime) {
             throw `Cannot confirm appointment: ${appointmentSlotId} as it has not been reserved.`
@@ -122,7 +122,7 @@ export class AppointmentSlotService {
 
         return this.appointmentSlotRepo.save({
             id: appointmentSlotId,
-            confirmedTime: new Date().getTime() / 1000
+            confirmedTime: now
         })
     }
 

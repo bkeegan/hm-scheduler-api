@@ -32,7 +32,7 @@ type Query {
 }
 
 input GetAvailableAppointmentSlotsInput {
-  startTime: Float! = 1722600885.619
+  startTime: Float! = 1722605235.332
   endTime: Float!
 }
 
@@ -47,14 +47,14 @@ type Mutation {
 
 input CreateAppointmentSlotInput {
   providerId: Int!
-  startTime: Int!
-  endTime: Int!
+  startTime: Float!
+  endTime: Float!
 }
 
 input CreateAppointmentSlotsFromSpanInput {
   providerId: Int!
-  startTime: Int!
-  endTime: Int!
+  startTime: Float!
+  endTime: Float!
   buffer: Int! = 0
 }
 
