@@ -99,13 +99,13 @@ export class AppointmentSlotService {
         const { appointmentSlotId } = confirmReservation;
         
         const existing = await this.appointmentSlotRepo.findOne({ where: { id: appointmentSlotId } } )
-        
-        if(existing.clientId != confirmReservation.clientId) {
-            throw `Cannot confirm appointment: ${appointmentSlotId} as this is reserved by another client`
-        }
-        
+          
         if(!existing.reservedTime) {
             throw `Cannot confirm appointment: ${appointmentSlotId} as it has not been reserved.`
+        }
+
+        if(existing.clientId != confirmReservation.clientId) {
+            throw `Cannot confirm appointment: ${appointmentSlotId} as this is reserved by another client`
         }
 
         if(existing.confirmedTime) {
