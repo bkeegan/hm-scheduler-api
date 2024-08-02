@@ -1,7 +1,7 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { AppointmentSlotService } from './appointment-slot.service';
 import { AppointmentSlot } from './appointment-slot.entity';
-import { ConfirmReservationInput, CreateAppointmentSlotInput, CreateAppointmentSlotsFromSpanInput, GetAvailableAppointmentSlotsInput, ReserveAppointmentInput } from './appointment-slot.dto';
+import { ConfirmReservationInput, CreateAppointmentSlotInput, CreateAppointmentSlotsFromSpanInput, ReserveAppointmentInput } from './appointment-slot.dto';
 import { MockRoles } from 'src/decorators/mock-roles.decorator';
 import { UseGuards } from '@nestjs/common';
 import { MockGuard } from 'src/guards/mock-guard';
@@ -36,8 +36,8 @@ export class AppointmentSlotResolver {
 
     @MockRoles(['admin', 'client'])
     @Query(() => [AppointmentSlot])
-    async getAvailableAppointmentSlots(@Args('input') input: GetAvailableAppointmentSlotsInput): Promise<AppointmentSlot[]> {
-        return await this.appointmentSlotService.getAvailableAppointmentSlots(input);
+    async getAvailableAppointmentSlots(): Promise<AppointmentSlot[]> {
+        return await this.appointmentSlotService.getAvailableAppointmentSlots();
     }
 
     @MockRoles(['admin', 'client'])

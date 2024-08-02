@@ -28,12 +28,6 @@ export class CreateAppointmentSlotsFromSpanInput {
 }
 
 @InputType()
-export class GetAvailableAppointmentSlotsInput {
-    @Field(() => Int)
-    providerId: number; 
-}
-
-@InputType()
 export class ReserveAppointmentInput {
     @Field(() => Int)
     appointmentSlotId: number; 
@@ -44,6 +38,9 @@ export class ReserveAppointmentInput {
 
 @InputType()
 export class ConfirmReservationInput {
+    @Field(() => Int)
+    clientId: number;
+
     @Field(() => Int)
     appointmentSlotId: number; 
 }

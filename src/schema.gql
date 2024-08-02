@@ -26,13 +26,9 @@ type AppointmentSlot {
 
 type Query {
   findAllAppointSlots: [AppointmentSlot!]!
-  getAvailableAppointmentSlots(input: GetAvailableAppointmentSlotsInput!): [AppointmentSlot!]!
+  getAvailableAppointmentSlots: [AppointmentSlot!]!
   findAllProviders: [Provider!]!
   findAllClients: [Client!]!
-}
-
-input GetAvailableAppointmentSlotsInput {
-  providerId: Int!
 }
 
 type Mutation {
@@ -63,6 +59,7 @@ input ReserveAppointmentInput {
 }
 
 input ConfirmReservationInput {
+  clientId: Int!
   appointmentSlotId: Int!
 }
 

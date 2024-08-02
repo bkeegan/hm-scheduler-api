@@ -55,7 +55,7 @@ After installing npm modules
     
     ```graphql 
     query {
-        getAvailableAppointmentSlots(input: { providerId: 1 }) {
+        getAvailableAppointmentSlots {
             startTime
             endTime
             id
@@ -79,7 +79,7 @@ After installing npm modules
 
     ```graphql 
     mutation {
-        confirmReservation(input: { appointmentSlotId: 3 }) {
+        confirmReservation(input: { clientId: 1, appointmentSlotId: 3 }) {
             id
             confirmedTime
         }
